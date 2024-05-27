@@ -5,7 +5,7 @@ from datetime import datetime
 import threading
 from queue import Queue
 
-ascii_banner = pyfiglet.figlet_format("DUNKELHEIT")
+ascii_banner = pyfiglet.figlet_format("DUNKELHEIT") #Banner da ferramenta
 print(ascii_banner)
 
 target = input(str("Target IP Address: "))
