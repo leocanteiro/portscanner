@@ -4,10 +4,11 @@ import socket
 from datetime import datetime
 import threading
 from queue import Queue
-
-ascii_banner = pyfiglet.figlet_format("DUNKELHEIT") #Banner da ferramenta
+#Banner da ferramenta#
+ascii_banner = pyfiglet.figlet_format("DUNKELHEIT")
 print(ascii_banner)
 
+#Input para digitar o IP do alvo
 target = input(str("Target IP Address: "))
 
 print("_" * 50)
@@ -15,10 +16,10 @@ print("Scanning IP: " + target)
 print("Scanning started at: " + str(datetime.now()))
 print("_" * 50)
 
-# Criação da fila de portas
+#fila de portas
 queue = Queue()
 
-# Função para escanear uma porta específica
+#funcao para escanear as portas e retornar os servicos utilizados
 def scan_port(port):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -45,32 +46,31 @@ def scan_port(port):
             elif port == 3389:
                 service = "RDP"
 
-            if service:
+            if service: #se a porta estiver rodando um dos servicos acima, retorna a porta+servico
                 print(f"\n[*] Port {port} ({service}) is open")
-            else:
+            else: #caso contrario apenas retorna a porta
                 print(f"\n[*] Port {port} is open")
         s.close()
     except socket.error:
         print(f"\nCouldn't connect to server at port {port}")
 
-# Função para threading
+#funcao threading
 def threader():
     while True:
         worker = queue.get()
         scan_port(worker)
         queue.task_done()
 
-# Criação das threads
-for x in range(100):  # Número de threads #acelera significamente o tempo de scan das portas
+#threading (utilizado para acelerar significativamente o scan das portas)
+for x in range(100):  
     t = threading.Thread(target=threader)
     t.daemon = True
     t.start()
 
-# Adiciona as portas na fila
+#add as portas na fila
 for port in range(1, 65535):
     queue.put(port)
 
-# Aguarda a conclusão de todas as tarefas na fila
 queue.join()
 
 print("_" * 50)
